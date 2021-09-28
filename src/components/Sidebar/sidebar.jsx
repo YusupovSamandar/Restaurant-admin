@@ -16,8 +16,11 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import HomeIcon from '@material-ui/icons/Home';
 import Avatar from '@material-ui/core/Avatar';
 import { Link } from "react-router-dom";
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 const drawerWidth = 240;
 
@@ -75,6 +78,18 @@ function ResponsiveDrawer(props) {
             </div>
             <List>
                 <Divider />
+                <Link style={{ color: "#333", textDecoration: "none" }} to="/add">
+                    <ListItem style={{ padding: "20px" }} button >
+                        <ListItemIcon><HomeIcon /></ListItemIcon>
+                        <ListItemText primary={"Home"} />
+                    </ListItem>
+                </Link>
+                <Link style={{ color: "#333", textDecoration: "none" }} to="/daily-income">
+                    <ListItem style={{ padding: "20px" }} button >
+                        <ListItemIcon><AttachMoneyIcon /></ListItemIcon>
+                        <ListItemText primary={"Daily Income"} />
+                    </ListItem>
+                </Link>
                 <Link style={{ color: "#333", textDecoration: "none" }} to="/stats">
                     <ListItem style={{ padding: "20px" }} button >
                         <ListItemIcon><EqualizerIcon /></ListItemIcon>
@@ -89,6 +104,19 @@ function ResponsiveDrawer(props) {
                 </Link>
                 <br />
                 <Divider />
+                <Link style={{ color: "#333", textDecoration: "none" }} to="/add-product">
+                    <ListItem style={{ padding: "20px" }} button >
+                        <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
+                        <ListItemText primary={"Add Product"} />
+                    </ListItem>
+                </Link>
+                <Link style={{ color: "#333", textDecoration: "none" }} to="/add-category">
+                    <ListItem style={{ padding: "20px" }} button >
+                        <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
+                        <ListItemText primary={"Add Category"} />
+                    </ListItem>
+                </Link>
+
             </List>
         </div>
     );

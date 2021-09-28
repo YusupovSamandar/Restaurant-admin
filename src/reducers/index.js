@@ -1,31 +1,44 @@
 import { createStore } from "redux";
-
 export const AppState = {
-    teachers: [],
-    students: [],
-    selectedTeacher: {},
-    groupStudents: [],
-    users: [],
-    currentUser: {},
-    revealFees: false,
-    isAuth: true,
-}
+    data: {},
+    waiters: [],
+    products: [],
+    collections: {}
+};
 
 const reducer = (state = AppState, action) => {
     switch (action.type) {
 
         case "DATA_LOAD": {
-            const { teachers, students } = action;
-            const chosenteacher = (teachers && teachers.length > 1) ? teachers[0] : {};
-            const filteredStudents = (chosenteacher) ?
-                students.filter(student => student.group === chosenteacher.group) :
-                [];
+            const { allData, waiters } = action;
             return {
                 ...state,
-                teachers: teachers,
-                students: students,
-                selectedTeacher: chosenteacher,
-                groupStudents: filteredStudents
+                data: allData,
+                waiters
+            }
+        }
+
+        case "WAITERS": {
+            const { waiters } = action;
+            return {
+                ...state,
+                waiters
+            }
+        }
+
+        case "ALLPRODUCTS": {
+            const { products } = action;
+            return {
+                ...state,
+                products
+            }
+        }
+
+        case "ALLCOLLECTIONS": {
+            const { collections } = action
+            return {
+                ...state,
+                collections
             }
         }
 

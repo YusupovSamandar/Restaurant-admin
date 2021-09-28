@@ -1,7 +1,28 @@
-export const loadData = (teachers, students) => {
+export const loadData = (allData, waiters) => {
     return {
         type: "DATA_LOAD",
-        teachers,
-        students
+        allData,
+        waiters
     };
 };
+
+export const updateWaiters = (waiters) => {
+    return {
+        type: "WAITERS",
+        waiters
+    }
+}
+
+export const getAllProducts = (products) => {
+    return {
+        type: "ALLPRODUCTS",
+        products
+    }
+}
+
+export const postAllCollections = (collections) => {
+    return {
+        type: "ALLCOLLECTIONS",
+        collections
+    }
+}
