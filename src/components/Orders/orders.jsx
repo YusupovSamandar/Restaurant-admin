@@ -50,7 +50,7 @@ export default function Orders() {
     const classes = useStyles();
     return (
         <div style={{ width: "98%", boxShadow: "1px 1px 20px 5px #707070", margin: "5vh auto 0" }}>
-            <ToastContainer autoClose={5000} toastStyle={{  color: "black", fontSize: "1.1rem", padding: "20px" }} style={{ width: "250px" }} />
+            <ToastContainer autoClose={5000} toastStyle={{ color: "black", fontSize: "1.1rem", padding: "20px" }} style={{ width: "250px" }} />
             <MaterialTable
                 title="Zakazlar🍔"
                 columns={[
@@ -82,7 +82,7 @@ export default function Orders() {
                             width: "20%"
                         }
                     },
-                
+
                 ]}
                 data={data}
                 options={{
@@ -95,7 +95,33 @@ export default function Orders() {
                         icon: 'print',
                         tooltip: 'Chek Chiqarish',
                         onClick: (event, rowData) => {
-                            // rowData console.log qilib korin nimaligini bilvolas
+                            let allOrders = {};
+                            let allOrdersFromSingleTable = data.filter((obj) => obj.table === rowData.table).reduce((acc, obj) => {
+                                acc.table = obj.table;
+                                acc.foods = [];
+                                if (!acc.money) {
+                                    acc.money = obj.money
+                                } else {
+                                    acc.money = acc.money + obj.money
+                                }
+
+                                obj.foods.forEach((foodObj) => {
+                                    if (!allOrders[foodObj.name]) {
+                                        allOrders[foodObj.name] = foodObj.quantity
+                                    } else {
+                                        allOrders[foodObj.name] = allOrders[foodObj.name] + foodObj.quantity
+                                    }
+                                });
+                                return acc;
+                            }, {});
+                            allOrders = Object.entries(allOrders).map(([key, value]) => {
+                                return { name: key, quantity: value }
+                            });
+                            allOrdersFromSingleTable.foods = allOrders;
+
+                            // TODO. Continue your f***ing printing code here ↓
+                            // allOrdersFromSingleTable is what u should print
+
                             alert("check chiqarish kere");
                         }
                     },
@@ -103,7 +129,7 @@ export default function Orders() {
                         icon: () => <DoneIcon />,
                         tooltip: 'Done',
                         onClick: (event, rowData) => {
-                            socket.emit("done-  order", rowData._id);
+                            socket.emit("done-order", rowData._id);
                         }
                     }
                 ]}
