@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Orders() {
-    const notify = (message) => toast(message, {
+    const notify = (message) => toast.info(message, {
         position: "bottom-right",
         hideProgressBar: false,
         closeOnClick: true,
@@ -35,7 +35,7 @@ export default function Orders() {
     useEffect(() => {
         socket.on("recieve-order", (message) => {
             if (message === "order sent") {
-                notify(`New Order at ${new Date().toLocaleTimeString()}`);
+                notify(`Yangi zakaz ${new Date().toLocaleTimeString()}`);
             }
             (async function () {
                 const { data } = await axios.get("http://localhost:4000/orders");
@@ -50,26 +50,12 @@ export default function Orders() {
     const classes = useStyles();
     return (
         <div style={{ width: "98%", boxShadow: "1px 1px 20px 5px #707070", margin: "5vh auto 0" }}>
-            <ToastContainer autoClose={15000} toastStyle={{ backgroundColor: "#345B63", color: "white", fontSize: "1.8rem", padding: "20px" }} style={{ width: "400px" }} />
+            <ToastContainer autoClose={5000} toastStyle={{  color: "black", fontSize: "1.1rem", padding: "20px" }} style={{ width: "250px" }} />
             <MaterialTable
-                title="Meals Pending 🍔"
+                title="Zakazlar🍔"
                 columns={[
                     {
-                        title: "Table", field: "table", align: "center",
-                        cellStyle: {
-                            fontSize: "1.2rem",
-                            width: "20%"
-                        }
-                    },
-                    {
-                        title: 'Money', field: 'money', align: "center",
-                        cellStyle: {
-                            fontSize: "1.2rem",
-                            width: "20%"
-                        }
-                    },
-                    {
-                        title: "food", field: "foods", editable: "never",
+                        title: "Nomi", field: "foods", editable: "never",
                         render: rowData => {
                             return (
                                 <Box className="box" id="style-7">
@@ -81,7 +67,22 @@ export default function Orders() {
                                 </Box>
                             );
                         }
-                    }
+                    },
+                    {
+                        title: 'Summa', field: 'money', align: "center",
+                        cellStyle: {
+                            fontSize: "1.2rem",
+                            width: "20%"
+                        }
+                    },
+                    {
+                        title: "Table", field: "table", align: "center",
+                        cellStyle: {
+                            fontSize: "1.2rem",
+                            width: "20%"
+                        }
+                    },
+                
                 ]}
                 data={data}
                 options={{
@@ -102,7 +103,7 @@ export default function Orders() {
                         icon: () => <DoneIcon />,
                         tooltip: 'Done',
                         onClick: (event, rowData) => {
-                            socket.emit("done-order", rowData._id);
+                            socket.emit("done-  order", rowData._id);
                         }
                     }
                 ]}

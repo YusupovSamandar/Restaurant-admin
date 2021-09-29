@@ -22,7 +22,7 @@ export default function Waiters() {
 
     return (
         <MaterialTable
-            title="Editable Preview"
+            title="Waiters"
             columns={columns}
             data={data} options={
                 { pageSize: 10 }
