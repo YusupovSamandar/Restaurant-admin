@@ -9,6 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import PersonIcon from '@material-ui/icons/Person';
 import List from '@material-ui/core/List';
+import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -21,6 +22,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Link } from "react-router-dom";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import axios from 'axios';
 
 const drawerWidth = 240;
 
@@ -137,10 +139,19 @@ function ResponsiveDrawer(props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap>
+                    <Typography style={{ justifyContent: "space-between", display: "flex", width: "100%" }} variant="h6" noWrap >
                         <Link style={{ color: "#fff", textDecoration: "none" }} to="/">
                             RESTAURANTLY
                         </Link>
+                        <Button
+                            variant='contained'
+                            onClick={() => {
+                                axios.delete("http://localhost:4000/status").then((msg) => {
+                                    alert(msg.data);
+                                })
+                            }}>
+                            free up
+                        </Button>
                     </Typography>
                 </Toolbar>
             </AppBar>
