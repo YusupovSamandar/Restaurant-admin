@@ -35,7 +35,7 @@ export default function Orders() {
     useEffect(() => {
         socket.on("recieve-order", (message) => {
             if (message === "order sent") {
-                notify(`Yangi zakaz ${new Date().toLocaleTimeString()}`);
+                notify(`Yangi zakaz ${new Date().toLocaleTimeString()}`)
             }
             (async function () {
                 const { data } = await axios.get("http://localhost:4000/orders");
