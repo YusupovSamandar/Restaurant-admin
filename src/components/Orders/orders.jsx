@@ -6,13 +6,21 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import DoneIcon from '@material-ui/icons/Done';
+import CurrencyFormat from 'react-currency-format';
 
 const socket = io("http://localhost:4000");
 
 const useStyles = makeStyles((theme) => ({
     chip: {
+        background:"transparent",
+border:"1px solid #1948F0",
+borderRadius:"10px",
+        display:"flex",
+        flexDirection:"column",
+        marginBottom:"10px",
+        width:"200px", 
         margin: 2,
-        fontSize: "1.5rem"
+        fontSize: "1.2rem"
     },
     noLabel: {
         marginTop: theme.spacing(3)
@@ -61,10 +69,24 @@ export default function Orders() {
                                 <Box className="box" id="style-7">
                                     {rowData.foods.map((exprt) => <Chip
                                         key={exprt._id}
-                                        label={exprt.name + ": " + exprt.quantity + "ta"}
+                                        label={exprt.name}
                                         className={classes.chip}
                                     />)}
                                 </Box>
+                            );
+                        }
+                    },
+                    {
+                        title: "Soni", field: "foods", editable: "never",
+                        render: rowData => {
+                            return (
+                                <div  id="style-7">
+                                    {rowData.foods.map((exprt) => <Chip
+                                        key={exprt._id}
+                                        label={ exprt.quantity}
+                                        className={classes.chip}
+                                    />)}
+                                </div>
                             );
                         }
                     },
@@ -73,10 +95,24 @@ export default function Orders() {
                         cellStyle: {
                             fontSize: "1.2rem",
                             width: "20%"
+                        },
+                        render: rowData => {
+                            return (
+                                <div  id="style-7">
+                                              <CurrencyFormat value={rowData.money} 
+                                              displayType={'text'} suffix=" sum" 
+                                              thousandSeparator={true} renderText={value =>                                     
+                                                 <p className="secondName">{value}  </p>
+} />
+    
+                                </div>
+                            );
                         }
+
+
                     },
                     {
-                        title: "Table", field: "table", align: "center",
+                        title: "Stol", field: "table", align: "center",
                         cellStyle: {
                             fontSize: "1.2rem",
                             width: "20%"
