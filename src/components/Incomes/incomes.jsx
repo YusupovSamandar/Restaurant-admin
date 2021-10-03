@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
 import axios from 'axios';
 import Grid from '@material-ui/core/Grid';
+import CurrencyFormat from 'react-currency-format';
 
 
 export default function Incomes() {
@@ -49,7 +50,20 @@ export default function Incomes() {
                     title="Kunlik Daromad"
                     columns={[
                         { title: "Date", field: "date", align: "center" },
-                        { title: 'Money', field: 'money', align: "center" }
+                        { title: 'Money', field: 'money', align: "center",
+                        render: rowData => {
+                            return (
+                                <div>
+                                              <CurrencyFormat value={rowData.money} 
+                                              displayType={'text'} suffix=" sum" 
+                                              thousandSeparator={true} renderText={value =>                                     
+                                                 <p className="secondName">{value}  </p>
+} />
+    
+                                </div>
+                            );
+                        }
+                    }
                     ]}
                     data={data}
                     options={{
