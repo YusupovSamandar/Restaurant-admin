@@ -7,7 +7,6 @@ import { getAllProducts } from "./../../actions";
 export default function Products() {
 
     const { products: data } = useSelector(state => state);
-    // const [lookupStructure, setlookupStructure] = React.useState({});
     const { useState } = React;
 
     React.useEffect(() => {
@@ -15,6 +14,8 @@ export default function Products() {
             setColumn([
                 { title: 'Name', field: 'name', validate: rowData => rowData.name === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
                 { title: 'Price', field: 'price', type: "numeric", validate: rowData => rowData.price === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
+                { title: 'Price 0.7', field: 'price07', type: "numeric", validate: rowData => rowData.price07 === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
+                { title: 'Price 0.5', field: 'price05', type: "numeric", validate: rowData => rowData.price05 === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
                 { title: "Category", field: "category", initialEditValue: "milliys", lookup: collections, validate: rowData => rowData.category === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true, editable: "onAdd" }
             ])
         })
@@ -63,7 +64,7 @@ export default function Products() {
                     }),
                 onRowUpdate: (newData, oldData) =>
                     new Promise((resolve, reject) => {
-                        axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price }).then(() => {
+                        axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07 }).then(() => {
                             updateGlobalProducts();
                         });
                         setTimeout(() => {
