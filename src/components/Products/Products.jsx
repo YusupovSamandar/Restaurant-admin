@@ -3,11 +3,34 @@ import MaterialTable from 'material-table';
 import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import { getAllProducts } from "./../../actions";
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function Products() {
 
+    const [open, setOpen] = React.useState(false);
+    const [service, setService] = React.useState(0);
     const { products: data } = useSelector(state => state);
     const { useState } = React;
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+    React.useEffect(() => {
+        (async function () {
+            let { data: serv } = axios.get("http://localhost:4000/service");
+            setService(serv)
+        })()
+    }, []);
+
 
     const [file, setFile] = useState(null);
 
@@ -29,7 +52,7 @@ export default function Products() {
                         let imageUrl = "http://localhost:4000/" + rowData.productImage
                         return (
                             <div style={{ marginLeft: "30px" }}>
-                                {rowData.productImage ? <img style={{ width: "100px", borderRadius: "0px" }} src={imageUrl} alt="" /> : "No Image"}
+                                <img style={{ width: "100px", borderRadius: "0px" }} src={imageUrl} alt="rasm yoq" />
                             </div>
                         );
                     }
@@ -57,61 +80,94 @@ export default function Products() {
     }
 
     return (
-        <MaterialTable
-            title="Editable Preview"
-            columns={columns}
-            data={data}
-            options={
-                { pageSize: 10 }
-            }
-            editable={{
-                onRowAdd: newData =>
-                    new Promise((resolve, reject) => {
-                        let fd = new FormData();
-                        if (newData.price07) {
-                            fd.append('price07', newData.price07);
-                        }
-                        if (newData.price05) {
-                            fd.append('price05', newData.price05);
-                        }
-                        fd.append('name', newData.name);
-                        fd.append('price', newData.price);
-                        fd.append('category', newData.category);
-                        fd.append('productImage', file);
-                        axios({
-                            method: 'post',
-                            url: `http://localhost:4000/data/${newData.category}`,
-                            data: fd
-                        }).then((messsage) => {
-                            if (messsage.status === 200) {
-                                updateGlobalProducts();
+        <div>
+            <MaterialTable
+                title="Editable Preview"
+                columns={columns}
+                data={data}
+                options={
+                    { pageSize: 10 }
+                }
+                editable={{
+                    onRowAdd: newData =>
+                        new Promise((resolve, reject) => {
+                            let fd = new FormData();
+                            fd.append('name', newData.name);
+                            fd.append('category', newData.category);
+                            fd.append('productImage', file);
+                            if (newData.price07) {
+                                fd.append('price07', newData.price07);
                             }
-                        });
-                        setTimeout(() => {
-                            resolve();
-                        }, 1000)
-                    }),
-                onRowUpdate: (newData, oldData) =>
-                    new Promise((resolve, reject) => {
-                        axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07 }).then(() => {
-                            updateGlobalProducts();
-                        });
-                        setTimeout(() => {
-                            resolve();
-                        }, 1000)
-                    }),
-                onRowDelete: oldData =>
-                    new Promise((resolve, reject) => {
-                        axios.delete(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: oldData.name }).then(() => {
-                            updateGlobalProducts();
-                        });
-                        setTimeout(() => {
-                            resolve()
-                        }, 1000)
-                    }),
-            }
-            }
-        />
+                            if (newData.price05) {
+                                fd.append('price05', newData.price05);
+                            }
+                            if (newData.price) {
+                                fd.append('price', newData.price);
+                            }
+                            axios({
+                                method: 'post',
+                                url: `http://localhost:4000/data/${newData.category}`,
+                                data: fd
+                            }).then((messsage) => {
+                                if (messsage.status === 200) {
+                                    updateGlobalProducts();
+                                }
+                            });
+                            setTimeout(() => {
+                                resolve();
+                            }, 1000)
+                        }),
+                    onRowUpdate: (newData, oldData) =>
+                        new Promise((resolve, reject) => {
+                            axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07 }).then(() => {
+                                updateGlobalProducts();
+                            });
+                            setTimeout(() => {
+                                resolve();
+                            }, 1000)
+                        }),
+                    onRowDelete: oldData =>
+                        new Promise((resolve, reject) => {
+                            axios.delete(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: oldData.name }).then(() => {
+                                updateGlobalProducts();
+                            });
+                            setTimeout(() => {
+                                resolve()
+                            }, 1000)
+                        }),
+                }
+                }
+            />
+            <div style={{ marginTop: "20px", textAlign: "left", display: "flex", alignItems: "center", gap: "20px" }}>
+                <TextField value={service} id="outlined-basic" onChange={(e) => { setService(e.target.value); }} label="Service %" variant="outlined" />
+                <Button variant="contained" disabled={service.length > 0 ? false : true} onClick={handleClickOpen} color="primary">Confirm</Button>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle style={{ width: "500px" }} id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            This will add extra {service}% money for per order!
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button onClick={() => {
+                            axios.post("http://localhost:4000/service", { service }).then(() => {
+                                handleClose();
+                            });
+                        }} color="primary" autoFocus>
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        </div>
     )
 }
 
