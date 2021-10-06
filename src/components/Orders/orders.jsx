@@ -82,7 +82,7 @@ export default function Orders() {
           },
           {
             title: "Summa",
-            field: "money",
+            field: "price",
             align: "center",
             cellStyle: {
               fontSize: "1.2rem",
