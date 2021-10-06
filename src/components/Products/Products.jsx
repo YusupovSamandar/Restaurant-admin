@@ -19,9 +19,9 @@ export default function Products() {
         axios.get("http://localhost:4000/collections").then(({ data: collections }) => {
             setColumn([
                 { title: 'Name', field: 'name', validate: rowData => rowData.name === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
-                { title: 'Price', field: 'price', type: "numeric", validate: rowData => rowData.price === '' ? { isValid: false, helperText: 'Price cannot be empty' } : true },
-                { title: 'Price 0.7', field: 'price07', type: "numeric", validate: rowData => rowData.price07 === '' ? { isValid: false, helperText: 'Price 0.7 cannot be empty' } : true },
-                { title: 'Price 0.5', field: 'price05', type: "numeric", validate: rowData => rowData.price05 === '' ? { isValid: false, helperText: 'Price 0.5 cannot be empty' } : true },
+                { title: 'Price', field: 'price', type: "numeric", validate: rowData => !rowData.price ? { isValid: false, helperText: 'Price cannot be less than 0' } : true },
+                { title: 'Price 0.7', field: 'price07', type: "numeric" },
+                { title: 'Price 0.5', field: 'price05', type: "numeric" },
                 {
                     title: 'Image', field: 'productImage', editable: "onAdd", editComponent: () => (
                         <input type="file" name="productImage" onChange={fileSelectedHandler} accept=".jpg, .jpeg, .png" />
@@ -68,10 +68,14 @@ export default function Products() {
                 onRowAdd: newData =>
                     new Promise((resolve, reject) => {
                         let fd = new FormData();
+                        if (newData.price07) {
+                            fd.append('price07', newData.price07);
+                        }
+                        if (newData.price05) {
+                            fd.append('price05', newData.price05);
+                        }
                         fd.append('name', newData.name);
                         fd.append('price', newData.price);
-                        fd.append('price05', newData.price05);
-                        fd.append('price07', newData.price07);
                         fd.append('category', newData.category);
                         fd.append('productImage', file);
                         axios({
