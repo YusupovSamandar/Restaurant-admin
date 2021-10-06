@@ -11,6 +11,13 @@ const socket = io("http://localhost:4000");
 
 const useStyles = makeStyles((theme) => ({
   chip: {
+    display: "flex",
+    marginBottom: "10px",
+    width: "200px",
+    background: "transparent",
+    border: "2px solid #1948F0",
+    borderRadius: "10px",
+
     margin: 2,
     fontSize: "1.5rem",
   },
@@ -66,13 +73,17 @@ export default function Orders() {
             title: "Nomi",
             field: "foods",
             editable: "never",
+            cellStyle: {
+              fontSize: "1.9rem",
+              width: "10%",
+            },
             render: (rowData) => {
               return (
                 <Box className="box" id="style-7">
                   {rowData.foods.map((exprt) => (
                     <Chip
                       key={exprt._id}
-                      label={exprt.name + ": " + exprt.quantity + "ta"}
+                      label={exprt.name}
                       className={classes.chip}
                     />
                   ))}
@@ -81,21 +92,42 @@ export default function Orders() {
             },
           },
           {
-            title: "Summa",
-            field: "price",
-            align: "center",
+            title: "Soni",
+            field: "foods",
+            align: "left  ",
+            cellStyle: {
+              fontSize: "1.9rem",
+              width: "10%",
+            },
+            render: (rowData) => {
+              return (
+                <Box className="box" id="style-7">
+                  {rowData.foods.map((exprt) => (
+                    <Chip
+                      key={exprt._id}
+                      label={exprt.quantity}
+                      className={classes.chip}
+                    />
+                  ))}
+                </Box>
+              );
+            },
+          },
+          {
+            title: "Stol",
+            field: "table",
+            align: "left",
             cellStyle: {
               fontSize: "1.2rem",
               width: "20%",
             },
-          },
-          {
-            title: "Table",
-            field: "table",
-            align: "center",
-            cellStyle: {
-              fontSize: "1.2rem",
-              width: "20%",
+            render: (rowData) => {
+              return (
+                <Chip
+                  label={rowData.table}
+                  className={classes.chip}
+                />
+              );
             },
           },
         ]}
@@ -105,52 +137,7 @@ export default function Orders() {
           search: false,
           pageSize: 10,
         }}
-        actions={[
-          {
-            icon: "print",
-            tooltip: "Chek Chiqarish",
-            onClick: (event, rowData) => {
-              let allOrders = {};
-              let allOrdersFromSingleTable = data
-                .filter((obj) => obj.table === rowData.table)
-                .reduce((acc, obj) => {
-                  acc.table = obj.table;
-                  acc.foods = [];
-                  if (!acc.money) {
-                    acc.money = obj.money;
-                  } else {
-                    acc.money = acc.money + obj.money;
-                  }
 
-                  obj.foods.forEach((foodObj) => {
-                    if (!allOrders[foodObj.name]) {
-                      allOrders[foodObj.name] = foodObj.quantity;
-                    } else {
-                      allOrders[foodObj.name] =
-                        allOrders[foodObj.name] + foodObj.quantity;
-                    }
-                  });
-                  return acc;
-                }, {});
-              allOrders = Object.entries(allOrders).map(([key, value]) => {
-                return { name: key, quantity: value };
-              });
-              allOrdersFromSingleTable.foods = allOrders;
-
-              // TODO. Continue your f***ing printing code here ↓
-              // allOrdersFromSingleTable is what u should print
-
-              alert("check chiqarish kere");
-            },
-          },
-          {
-            icon: () => <DoneIcon />,
-            tooltip: "Done",
-            onClick: (event, rowData) => {
-              socket.emit("done-order", rowData._id);
-            },
-          },
-        ]}
       />
     </div>
   );
