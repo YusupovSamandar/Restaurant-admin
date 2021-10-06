@@ -9,17 +9,35 @@ export default function Products() {
     const { products: data } = useSelector(state => state);
     const { useState } = React;
 
+    const [file, setFile] = useState(null);
+
+    const fileSelectedHandler = (e) => {
+        setFile(e.target.files[0]);
+    }
+
     React.useEffect(() => {
         axios.get("http://localhost:4000/collections").then(({ data: collections }) => {
             setColumn([
                 { title: 'Name', field: 'name', validate: rowData => rowData.name === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
-                { title: 'Price', field: 'price', type: "numeric", validate: rowData => rowData.price === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
-                { title: 'Price 0.7', field: 'price07', type: "numeric", validate: rowData => rowData.price07 === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
-                { title: 'Price 0.5', field: 'price05', type: "numeric", validate: rowData => rowData.price05 === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
-                { title: "Category", field: "category", initialEditValue: "milliys", lookup: collections, validate: rowData => rowData.category === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true, editable: "onAdd" }
+                { title: 'Price', field: 'price', type: "numeric", validate: rowData => rowData.price === '' ? { isValid: false, helperText: 'Price cannot be empty' } : true },
+                { title: 'Price 0.7', field: 'price07', type: "numeric", validate: rowData => rowData.price07 === '' ? { isValid: false, helperText: 'Price 0.7 cannot be empty' } : true },
+                { title: 'Price 0.5', field: 'price05', type: "numeric", validate: rowData => rowData.price05 === '' ? { isValid: false, helperText: 'Price 0.5 cannot be empty' } : true },
+                {
+                    title: 'Image', field: 'productImage', editable: "onAdd", editComponent: () => (
+                        <input type="file" name="productImage" onChange={fileSelectedHandler} accept=".jpg, .jpeg, .png" />
+                    ), render: rowData => {
+                        let imageUrl = "http://localhost:4000/" + rowData.productImage
+                        return (
+                            <div style={{ marginLeft: "30px" }}>
+                                {rowData.productImage ? <img style={{ width: "100px", borderRadius: "0px" }} src={imageUrl} alt="" /> : "No Image"}
+                            </div>
+                        );
+                    }
+                },
+                { title: "Category", field: "category", initialEditValue: "milliys", lookup: collections, validate: rowData => rowData.category === '' ? { isValid: false, helperText: 'Category cannot be empty' } : true, editable: "onAdd" }
             ])
         })
-    }, [])
+    }, []);
 
     const [columns, setColumn] = useState([]);
     const dispatch = useDispatch();
@@ -49,10 +67,17 @@ export default function Products() {
             editable={{
                 onRowAdd: newData =>
                     new Promise((resolve, reject) => {
+                        let fd = new FormData();
+                        fd.append('name', newData.name);
+                        fd.append('price', newData.price);
+                        fd.append('price05', newData.price05);
+                        fd.append('price07', newData.price07);
+                        fd.append('category', newData.category);
+                        fd.append('productImage', file);
                         axios({
                             method: 'post',
                             url: `http://localhost:4000/data/${newData.category}`,
-                            data: newData
+                            data: fd
                         }).then((messsage) => {
                             if (messsage.status === 200) {
                                 updateGlobalProducts();
