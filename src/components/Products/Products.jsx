@@ -140,7 +140,7 @@ export default function Products() {
             />
             <div style={{ marginTop: "20px", textAlign: "left", display: "flex", alignItems: "center", gap: "20px" }}>
                 <TextField value={service} id="outlined-basic" onChange={(e) => { setService(e.target.value); }} label="Service %" variant="outlined" />
-                <Button variant="contained" disabled={service.length > 0 ? false : true} onClick={handleClickOpen} color="primary">Confirm</Button>
+                <Button variant="contained" disabled={service > 0 ? false : true} onClick={handleClickOpen} color="primary">Confirm</Button>
                 <Dialog
                     open={open}
                     onClose={handleClose}
