@@ -50,23 +50,25 @@ export default function Incomes() {
                     title="Kunlik Daromad"
                     columns={[
                         { title: "Date", field: "date", align: "center" },
-                        { title: 'Money', field: 'money', align: "center",
-                        render: rowData => {
-                            return (
-                                <div>
-                                              <CurrencyFormat value={rowData.money} 
-                                              displayType={'text'} suffix=" sum" 
-                                              thousandSeparator={true} renderText={value =>                                     
-                                                 <p className="secondName">{value}  </p>
-} />
-    
-                                </div>
-                            );
+                        {
+                            title: 'Money', field: 'money', align: "center",
+                            render: rowData => {
+                                return (
+                                    <div>
+                                        <CurrencyFormat value={rowData.money}
+                                            displayType={'text'} suffix=" sum"
+                                            thousandSeparator={true} renderText={value =>
+                                                <p className="secondName">{value}  </p>
+                                            } />
+
+                                    </div>
+                                );
+                            }
                         }
-                    }
                     ]}
                     data={data}
                     options={{
+                        exportButton: true,
                         search: true,
                         pageSize: 10
                     }}
