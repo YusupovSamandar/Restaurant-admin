@@ -5,7 +5,6 @@ import { io } from "socket.io-client";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import DoneIcon from "@material-ui/icons/Done";
 
 const socket = io("http://localhost:4000");
 

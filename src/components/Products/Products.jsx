@@ -26,7 +26,7 @@ export default function Products() {
     };
     React.useEffect(() => {
         (async function () {
-            let { data: serv } = axios.get("http://localhost:4000/service");
+            let { data: serv } = await axios.get("http://localhost:4000/service");
             setService(serv)
         })()
     }, []);
@@ -47,7 +47,7 @@ export default function Products() {
                 { title: 'Price 0.5', field: 'price05', type: "numeric" },
                 {
                     title: 'Image', field: 'productImage', editable: "onAdd", editComponent: () => (
-                        <input type="file" name="productImage" onChange={fileSelectedHandler} accept=".jpg, .jpeg, .png" />
+                        <input type="file" value={file} name="productImage" onChange={fileSelectedHandler} accept=".jpg, .jpeg, .png" />
                     ), render: rowData => {
                         let imageUrl = "http://localhost:4000/" + rowData.productImage
                         return (
@@ -57,9 +57,10 @@ export default function Products() {
                         );
                     }
                 },
-                { title: "Category", field: "category", initialEditValue: "milliys", lookup: collections, validate: rowData => rowData.category === '' ? { isValid: false, helperText: 'Category cannot be empty' } : true, editable: "onAdd" }
+                { title: "Category", field: "category", initialEditValue: "fast-foods", lookup: collections, validate: rowData => rowData.category === '' ? { isValid: false, helperText: 'Category cannot be empty' } : true, editable: "onAdd" }
             ])
         })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const [columns, setColumn] = useState([]);
@@ -95,6 +96,7 @@ export default function Products() {
                             fd.append('name', newData.name);
                             fd.append('category', newData.category);
                             fd.append('productImage', file);
+                            setFile(null);
                             if (newData.price07) {
                                 fd.append('price07', newData.price07);
                             }
