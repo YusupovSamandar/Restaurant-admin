@@ -1,27 +1,38 @@
 import React, { useEffect, useState } from "react";
-import MaterialTable from "material-table";
-import { Box, makeStyles, Chip } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import { io } from "socket.io-client";
 import { ToastContainer, toast } from "react-toastify";
+import PersonIcon from '@material-ui/icons/Person';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+import "./orders.css";
+import { red } from '@material-ui/core/colors';
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 const socket = io("http://localhost:4000");
 
 const useStyles = makeStyles((theme) => ({
-  chip: {
-    display: "flex",
-    marginBottom: "10px",
-    width: "200px",
-    background: "transparent",
-    border: "2px solid #1948F0",
-    borderRadius: "10px",
-
-    margin: 2,
-    fontSize: "1.5rem",
+  root: {
+    maxWidth: 345,
   },
-  noLabel: {
-    marginTop: theme.spacing(3),
+  media: {
+    height: 0,
+    paddingTop: '56.25%', // 16:9
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)',
+  },
+  avatar: {
+    backgroundColor: red[500],
   },
 }));
 
@@ -55,89 +66,59 @@ export default function Orders() {
   return (
     <div
       style={{
-        width: "98%",
-        boxShadow: "1px 1px 20px 5px #707070",
-        margin: "5vh auto 0",
+        width: "90%",
+        overflow: "auto",
+        borderRadius: "50px",
+        margin: "5vh auto 5vh",
+        boxSizing: "border-box",
+        padding: "10px 20px",
+        height: "90vh",
+        background: "rgba(255, 255, 255, 0.80)",
+        boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        border: "1px solid rgba(255, 255, 255, 0.3)"
       }}
     >
+      <h1 style={{ marginBottom: "40px" }}>Order List</h1>
+      <Grid container spacing={3}>
+        {data.map((order, index) => (
+          <Grid item xs={3}>
+            <Card className={classes.root} style={{ padding: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <h4 style={{ margin: "0 0 5px", padding: 0 }}> Order #{order.table} </h4>
+                  <small style={{ color: "rgb(165 158 158)", float: "left", fontSize: "1rem" }}>22:30</small>
+                </div>
+                <PersonIcon style={{ fontSize: "2rem", color: "violet" }} />
+              </div>
+              <hr />
+              {/* Food Orders */}
+              <div style={{ height: "200px", overflow: "auto" }}>
+                {order.foods.map((perfood) => (
+                  <div style={{ display: "flex", gap: "20px", margin: "30px 10px" }}>
+                    <img style={{ width: "70px", borderRadius: "20px" }} src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Dimlama_%2816425713838%29.jpg" alt="" />
+                    <div>
+                      <h3 style={{ margin: "0", padding: "0" }}>{perfood.name}</h3>
+                      <h4 style={{ margin: "5px 0", padding: "0", textAlign: "left" }}>Soni: {perfood.quantity}</h4>
+                      <Divider />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Divider style={{ marginBottom: "10px" }} />
+              <small style={{ color: "rgb(165, 158, 158)", fontSize: "1rem" }}> Jami: {order.foods.length} </small>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
       <ToastContainer
         autoClose={5000}
         toastStyle={{ color: "black", fontSize: "1.1rem", padding: "20px" }}
         style={{ width: "250px" }}
       />
-      <MaterialTable
-        title="Zakazlar🍔"
-        columns={[
-          {
-            title: "Nomi",
-            field: "foods",
-            editable: "never",
-            cellStyle: {
-              fontSize: "1.9rem",
-              width: "10%",
-            },
-            render: (rowData) => {
-              return (
-                <Box className="box" id="style-7">
-                  {rowData.foods.map((exprt) => (
-                    <Chip
-                      key={exprt._id}
-                      label={exprt.name}
-                      className={classes.chip}
-                    />
-                  ))}
-                </Box>
-              );
-            },
-          },
-          {
-            title: "Soni",
-            field: "foods",
-            align: "left  ",
-            cellStyle: {
-              fontSize: "1.9rem",
-              width: "10%",
-            },
-            render: (rowData) => {
-              return (
-                <Box className="box" id="style-7">
-                  {rowData.foods.map((exprt) => (
-                    <Chip
-                      key={exprt._id}
-                      label={exprt.quantity}
-                      className={classes.chip}
-                    />
-                  ))}
-                </Box>
-              );
-            },
-          },
-          {
-            title: "Stol",
-            field: "table",
-            align: "left",
-            cellStyle: {
-              fontSize: "1.2rem",
-              width: "20%",
-            },
-            render: (rowData) => {
-              return (
-                <Chip
-                  label={rowData.table}
-                  className={classes.chip}
-                />
-              );
-            },
-          },
-        ]}
-        data={data}
-        options={{
-          actionsColumnIndex: -1,
-          search: false,
-          pageSize: 10,
-        }}
-
-      />
     </div>
   );
 }
+
