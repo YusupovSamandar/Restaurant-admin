@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { io } from "socket.io-client";
 import { ToastContainer, toast } from "react-toastify";
-import PersonIcon from '@material-ui/icons/Person';
+// import PersonIcon from '@material-ui/icons/Person';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -54,17 +54,20 @@ export default function Orders() {
       }
       (async function () {
         const { data } = await axios.get("http://localhost:4000/orders");
+        data.reverse()
         setData(data);
       })();
     });
     (async function () {
       const { data } = await axios.get("http://localhost:4000/orders");
+      data.reverse()
       setData(data);
     })();
   }, []);
   const classes = useStyles();
   return (
     <div
+      className="mainContainer"
       style={{
         width: "90%",
         overflow: "auto",
@@ -75,39 +78,45 @@ export default function Orders() {
         height: "90vh",
         background: "rgba(255, 255, 255, 0.80)",
         boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
+        backdropFilter: "blur(9px)",
+        WebkitBackdropFilter: "blur(9px)",
         border: "1px solid rgba(255, 255, 255, 0.3)"
       }}
     >
-      <h1 style={{ marginBottom: "40px" }}>Order List</h1>
+      <h1 style={{ marginBottom: "40px", color: "#fff" }}>Orders List</h1>
       <Grid container spacing={3}>
         {data.map((order, index) => (
-          <Grid item xs={3}>
+          <Grid item xs={12} lg={4} md={6}>
             <Card className={classes.root} style={{ padding: "20px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <h4 style={{ margin: "0 0 5px", padding: 0 }}> Order #{order.table} </h4>
-                  <small style={{ color: "rgb(165 158 158)", float: "left", fontSize: "1rem" }}>22:30</small>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                  <h4 style={{ margin: "0 0 5px", padding: 0 }}> Order #{Math.floor(Math.random() * 1000)} </h4>
+                  <small style={{ color: "rgb(165 158 158)", float: "left", fontSize: "1.1rem" }}>{(Number(order.time.split(":")[0]) - new Date().getHours()) === 0 ? (new Date().getMinutes() - Number(order.time.split(":")[1])) + " min oldin" : (new Date().getHours() - Number(order.time.split(":")[0])) + " soat oldin"}</small>
                 </div>
-                <PersonIcon style={{ fontSize: "2rem", color: "violet" }} />
               </div>
               <hr />
               {/* Food Orders */}
               <div style={{ height: "200px", overflow: "auto" }}>
                 {order.foods.map((perfood) => (
-                  <div style={{ display: "flex", gap: "20px", margin: "30px 10px" }}>
-                    <img style={{ width: "70px", borderRadius: "20px" }} src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Dimlama_%2816425713838%29.jpg" alt="" />
-                    <div>
-                      <h3 style={{ margin: "0", padding: "0" }}>{perfood.name}</h3>
-                      <h4 style={{ margin: "5px 0", padding: "0", textAlign: "left" }}>Soni: {perfood.quantity}</h4>
-                      <Divider />
+                  <div>
+                    <div style={{ display: "flex", gap: "20px", margin: "21.6px 10px" }}>
+                      <img style={{ width: "70px", borderRadius: "20px" }} src={
+                        perfood.productImage === "null" || !perfood.productImage
+                          ? "https://icons-for-free.com/iconfiles/png/512/food+icon-1320184414775447246.png"
+                          : "http://localhost:4000/" + perfood.productImage
+                      } alt="" />
+                      <div>
+                        <h3 style={{ margin: "0", padding: "0" }}>{perfood.name}</h3>
+                        <h4 style={{ margin: "5px 0", padding: "0", textAlign: "left", color: "#5a5af5", fontWeight: "500" }}>Soni: {perfood.quantity}</h4>
+
+                      </div>
                     </div>
+                    <Divider />
                   </div>
                 ))}
               </div>
               <Divider style={{ marginBottom: "10px" }} />
-              <small style={{ color: "rgb(165, 158, 158)", fontSize: "1rem" }}> Jami: {order.foods.length} </small>
+              <small style={{ color: "rgb(116 109 109)", fontSize: "1rem" }}> Sto'l raqami: {order.table} </small>
             </Card>
           </Grid>
         ))}

@@ -1,21 +1,28 @@
 body {
-    margin: 0;
-    padding: 0;
-    background-image: url("./img/blur.jpg");
-    background-attachment: fixed;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+  margin: 0;
+  padding: 0;
+  background-image: url("./img/blur.jpg");
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 ::-webkit-scrollbar {
-    width: 10px;
+  width: 10px;
 }
 ::-webkit-scrollbar-thumb {
-    background-color: #d6dee1;
-    border-radius: 20px;
-    border: 6px solid transparent;
+  background-color: #d6dee1;
+  border-radius: 20px;
+  border: 6px solid transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #a8bbbf;
+  background-color: #a8bbbf;
+}
+.mainContainer {
+  backdrop-filter: blur(3px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(3px) saturate(180%) !important;
+  background-color: rgba(239, 243, 173, 0.16) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(209, 213, 219, 0.3) !important;
 }

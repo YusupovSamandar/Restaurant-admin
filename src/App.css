@@ -2,8 +2,11 @@
   text-align: center;
 }
 
-#statistics-paper{
+#statistics-paper {
   margin: 0;
+}
+.MuiAppBar-colorPrimary {
+  background-color: #5162c100 !important;
 }
 
 .App-logo {
