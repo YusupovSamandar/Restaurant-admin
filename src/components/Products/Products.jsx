@@ -42,9 +42,10 @@ export default function Products() {
         axios.get("http://localhost:4000/collections").then(({ data: collections }) => {
             setColumn([
                 { title: 'Name', field: 'name', validate: rowData => rowData.name === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
-                { title: 'Price', field: 'price', type: "numeric", validate: rowData => !rowData.price ? { isValid: false, helperText: 'Price cannot be less than 0' } : true },
+                { title: 'Price', field: 'price', type: "numeric", validate: rowData => rowData.price > 0 },
                 { title: 'Price 0.7', field: 'price07', type: "numeric" },
                 { title: 'Price 0.5', field: 'price05', type: "numeric" },
+                { title: 'Status', field: 'isAvailable', initialEditValue: 63, lookup: { 34: 'tugadi', 63: 'bor' } },
                 {
                     title: 'Image', field: 'productImage', editable: "onAdd", editComponent: () => (
                         <input type="file" value={file} name="productImage" onChange={fileSelectedHandler} accept=".jpg, .jpeg, .png" />
@@ -95,6 +96,7 @@ export default function Products() {
                             let fd = new FormData();
                             fd.append('name', newData.name);
                             fd.append('category', newData.category);
+                            fd.append('isAvailable', newData.isAvailable);
                             fd.append('productImage', file);
                             setFile(null);
                             if (newData.price07) {
@@ -121,7 +123,7 @@ export default function Products() {
                         }),
                     onRowUpdate: (newData, oldData) =>
                         new Promise((resolve, reject) => {
-                            axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07 }).then(() => {
+                            axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07, isAvailable: newData.isAvailable }).then(() => {
                                 updateGlobalProducts();
                             });
                             setTimeout(() => {
@@ -130,7 +132,7 @@ export default function Products() {
                         }),
                     onRowDelete: oldData =>
                         new Promise((resolve, reject) => {
-                            axios.delete(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: oldData.name }).then(() => {
+                            axios.delete(`http://localhost:4000/data/${oldData.category}/${oldData.name}`).then(() => {
                                 updateGlobalProducts();
                             });
                             setTimeout(() => {
