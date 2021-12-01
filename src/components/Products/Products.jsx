@@ -46,6 +46,7 @@ export default function Products() {
                 { title: 'Price 0.7', field: 'price07', type: "numeric" },
                 { title: 'Price 0.5', field: 'price05', type: "numeric" },
                 { title: 'Status', field: 'isAvailable', initialEditValue: 63, lookup: { 34: 'tugadi', 63: 'bor' } },
+                { title: 'Tarif', field: 'description' },
                 {
                     title: 'Image', field: 'productImage', editable: "onAdd", editComponent: () => (
                         <input type="file" value={file} name="productImage" onChange={fileSelectedHandler} accept=".jpg, .jpeg, .png" />
@@ -102,6 +103,9 @@ export default function Products() {
                             if (newData.price07) {
                                 fd.append('price07', newData.price07);
                             }
+                            if (newData.description) {
+                                fd.append('description', newData.description);
+                            }
                             if (newData.price05) {
                                 fd.append('price05', newData.price05);
                             }
@@ -123,7 +127,7 @@ export default function Products() {
                         }),
                     onRowUpdate: (newData, oldData) =>
                         new Promise((resolve, reject) => {
-                            axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07, isAvailable: newData.isAvailable }).then(() => {
+                            axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07, isAvailable: newData.isAvailable, description: newData.description }).then(() => {
                                 updateGlobalProducts();
                             });
                             setTimeout(() => {
