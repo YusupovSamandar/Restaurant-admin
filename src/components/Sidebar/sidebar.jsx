@@ -146,7 +146,7 @@ function ResponsiveDrawer(props) {
                         <Button
                             variant='contained'
                             onClick={() => {
-                                axios.delete("http://localhost:4000/status").then((msg) => {
+                                axios.delete("http://192.168.1.200:4000/status").then((msg) => {
                                     alert(msg.data);
                                 })
                             }}>

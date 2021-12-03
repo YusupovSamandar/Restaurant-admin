@@ -11,7 +11,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import defaultFood from './img/default.png';
 import { red } from '@material-ui/core/colors';
 
-const socket = io("http://localhost:4000");
+const socket = io("http://192.168.1.200:4000");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,14 +53,14 @@ export default function Orders() {
         notify(`Yangi zakaz ${new Date().toLocaleTimeString()}`);
       }
       (async function () {
-        let { data } = await axios.get("http://localhost:4000/orders");
+        let { data } = await axios.get("http://192.168.1.200:4000/orders");
         data.reverse()
         data = data.filter((ordr) => ordr.status === "pending")
         setData(data);
       })();
     });
     (async function () {
-      let { data } = await axios.get("http://localhost:4000/orders");
+      let { data } = await axios.get("http://192.168.1.200:4000/orders");
       data.reverse()
       data = data.filter((ordr) => ordr.status === "pending")
       setData(data);
@@ -103,7 +103,7 @@ export default function Orders() {
                 <img style={{ width: "70px", borderRadius: "20px" }} src={
                   perfood.productImage === "null" || !perfood.productImage
                     ? defaultFood
-                    : "http://localhost:4000/" + perfood.productImage
+                    : "http://192.168.1.200:4000/" + perfood.productImage
                 } alt="" />
                 <div>
                   <h3 style={{ margin: "0", padding: "0" }}>{perfood.name.slice(-1) === "1" ? perfood.name.slice(0, -2) : perfood.name}</h3>

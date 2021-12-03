@@ -26,7 +26,7 @@ export default function Products() {
     };
     React.useEffect(() => {
         (async function () {
-            let { data: serv } = await axios.get("http://localhost:4000/service");
+            let { data: serv } = await axios.get("http://192.168.1.200:4000/service");
             setService(serv)
         })()
     }, []);
@@ -39,7 +39,7 @@ export default function Products() {
     }
 
     React.useEffect(() => {
-        axios.get("http://localhost:4000/collections").then(({ data: collections }) => {
+        axios.get("http://192.168.1.200:4000/collections").then(({ data: collections }) => {
             setColumn([
                 { title: 'Name', field: 'name', validate: rowData => rowData.name === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
                 { title: 'Price', field: 'price', type: "numeric", validate: rowData => rowData.price > 0 },
@@ -51,7 +51,7 @@ export default function Products() {
                     title: 'Image', field: 'productImage', editable: "onAdd", editComponent: () => (
                         <input type="file" value={file} name="productImage" onChange={fileSelectedHandler} accept=".jpg, .jpeg, .png" />
                     ), render: rowData => {
-                        let imageUrl = "http://localhost:4000/" + rowData.productImage
+                        let imageUrl = "http://192.168.1.200:4000/" + rowData.productImage
                         return (
                             <div style={{ marginLeft: "30px" }}>
                                 <img style={{ width: "100px", borderRadius: "0px" }} src={imageUrl} alt="rasm yoq" />
@@ -59,7 +59,7 @@ export default function Products() {
                         );
                     }
                 },
-                { title: "Category", field: "category", initialEditValue: "fast-foods", lookup: collections, validate: rowData => rowData.category === '' ? { isValid: false, helperText: 'Category cannot be empty' } : true, editable: "onAdd" }
+                { title: "Category", field: "category", initialEditValue: Object.keys(collections)[0], lookup: collections, validate: rowData => rowData.category === '' ? { isValid: false, helperText: 'Category cannot be empty' } : true, editable: "onAdd" }
             ])
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,8 +70,8 @@ export default function Products() {
 
     const updateGlobalProducts = () => {
         (async () => {
-            const { data: initialData } = await axios.get("http://localhost:4000/data");
-            axios.get("http://localhost:4000/collections").then(({ data: collections }) => {
+            const { data: initialData } = await axios.get("http://192.168.1.200:4000/data");
+            axios.get("http://192.168.1.200:4000/collections").then(({ data: collections }) => {
                 let result = Object.keys(collections).map((key) => {
                     return initialData[key].map((obj) => {
                         return { ...obj, category: key }
@@ -95,7 +95,7 @@ export default function Products() {
                     onRowAdd: newData =>
                         new Promise((resolve, reject) => {
                             let fd = new FormData();
-                            fd.append('name', newData.name);
+                            fd.append('name', newData.name.trim());
                             fd.append('category', newData.category);
                             fd.append('isAvailable', newData.isAvailable);
                             fd.append('productImage', file);
@@ -114,7 +114,7 @@ export default function Products() {
                             }
                             axios({
                                 method: 'post',
-                                url: `http://localhost:4000/data/${newData.category}`,
+                                url: `http://192.168.1.200:4000/data/${newData.category}`,
                                 data: fd
                             }).then((messsage) => {
                                 if (messsage.status === 200) {
@@ -127,7 +127,7 @@ export default function Products() {
                         }),
                     onRowUpdate: (newData, oldData) =>
                         new Promise((resolve, reject) => {
-                            axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07, isAvailable: newData.isAvailable, description: newData.description }).then(() => {
+                            axios.put(`http://192.168.1.200:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07, isAvailable: newData.isAvailable, description: newData.description }).then(() => {
                                 updateGlobalProducts();
                             });
                             setTimeout(() => {
@@ -136,7 +136,7 @@ export default function Products() {
                         }),
                     onRowDelete: oldData =>
                         new Promise((resolve, reject) => {
-                            axios.delete(`http://localhost:4000/data/${oldData.category}/${oldData.name}`).then(() => {
+                            axios.delete(`http://192.168.1.200:4000/data/${oldData.category}/${oldData.name}`).then(() => {
                                 updateGlobalProducts();
                             });
                             setTimeout(() => {
@@ -166,7 +166,7 @@ export default function Products() {
                             Cancel
                         </Button>
                         <Button onClick={() => {
-                            axios.post("http://localhost:4000/service", { service }).then(() => {
+                            axios.post("http://192.168.1.200:4000/service", { service }).then(() => {
                                 handleClose();
                             });
                         }} color="primary" autoFocus>

@@ -8,7 +8,7 @@ export default function Category() {
 
     const updateGlobalCategory = () => {
         (async function () {
-            const { data } = await axios.get("http://localhost:4000/collections");
+            const { data } = await axios.get("http://192.168.1.200:4000/collections");
             console.log(data);
             let maped = Object.keys(data).map((collection) => {
                 return { name: collection };
@@ -43,7 +43,7 @@ export default function Category() {
                         setTimeout(() => {
                             axios({
                                 method: 'get',
-                                url: `http://localhost:4000/data/${newData.name}`,
+                                url: `http://192.168.1.200:4000/data/${newData.name.trim}`,
                                 data: newData
                             }).then(() => {
                                 updateGlobalCategory();
@@ -53,7 +53,7 @@ export default function Category() {
                     }),
                 onRowDelete: oldData =>
                     new Promise((resolve, reject) => {
-                        axios.delete(`http://localhost:4000/data/${oldData.name}`).then((_response) => {
+                        axios.delete(`http://192.168.1.200:4000/data/${oldData.name}`).then((_response) => {
 
                         });
                         setTimeout(() => {

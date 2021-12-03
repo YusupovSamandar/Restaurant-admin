@@ -9,7 +9,7 @@ export default function Incomes() {
     const [data, setData] = useState();
     useEffect(() => {
         (async function () {
-            let { data: initialData } = await axios.get("http://localhost:4000/status");
+            let { data: initialData } = await axios.get("http://192.168.1.200:4000/status");
             // let redesignedData = initialData.reduce((acc, obj) => {
             //     let [day, month, year] = obj.date.split("/");
             //     acc.push({ day, month, year, money: obj.money });

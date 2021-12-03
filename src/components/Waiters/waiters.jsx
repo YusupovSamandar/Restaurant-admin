@@ -17,7 +17,7 @@ export default function Waiters() {
     const dispatch = useDispatch();
 
     const updateGlobalWaiters = () => {
-        axios.get("http://localhost:4000/data/waiters").then(({ data: allWaiters }) => {
+        axios.get("http://192.168.1.200:4000/data/waiters").then(({ data: allWaiters }) => {
             dispatch(updateWaiters(allWaiters));
         });
     }
@@ -35,7 +35,7 @@ export default function Waiters() {
                         setTimeout(() => {
                             axios({
                                 method: 'post',
-                                url: 'http://localhost:4000/data/waiters',
+                                url: 'http://192.168.1.200:4000/data/waiters',
                                 data: newData
                             }).then(() => {
                                 updateGlobalWaiters();
@@ -46,7 +46,7 @@ export default function Waiters() {
                 onRowUpdate: (newData, oldData) =>
                     new Promise((resolve, reject) => {
                         setTimeout(() => {
-                            axios.put(`http://localhost:4000/data/waiters/${oldData.name}`, { name: newData.name, surname: newData.surname, phoneNumber: newData.phoneNumber, loginName: newData.loginName, loginPassword: newData.loginPassword }).then(() => {
+                            axios.put(`http://192.168.1.200:4000/data/waiters/${oldData.name}`, { name: newData.name, surname: newData.surname, phoneNumber: newData.phoneNumber, loginName: newData.loginName, loginPassword: newData.loginPassword }).then(() => {
                                 updateGlobalWaiters();
                             });
                             resolve();
@@ -55,7 +55,7 @@ export default function Waiters() {
                 onRowDelete: oldData =>
                     new Promise((resolve, reject) => {
                         setTimeout(() => {
-                            axios.delete(`http://localhost:4000/data/waiters/${oldData.name}`, { name: oldData.name }).then(() => {
+                            axios.delete(`http://192.168.1.200:4000/data/waiters/${oldData.name}`, { name: oldData.name }).then(() => {
                                 updateGlobalWaiters();
                             });
                             resolve()
