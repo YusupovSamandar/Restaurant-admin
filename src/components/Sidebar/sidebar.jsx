@@ -4,7 +4,6 @@ import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import PersonIcon from '@material-ui/icons/Person';
@@ -17,41 +16,71 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import HomeIcon from '@material-ui/icons/Home';
-import Avatar from '@material-ui/core/Avatar';
 import { Link } from "react-router-dom";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import axios from 'axios';
+import clsx from 'clsx';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
     },
-    drawer: {
-        [theme.breakpoints.up('sm')]: {
-            width: drawerWidth,
-            flexShrink: 0,
-        },
-    },
     appBar: {
-        [theme.breakpoints.up('sm')]: {
-            width: `calc(100% - ${drawerWidth}px)`,
-            marginLeft: drawerWidth,
-        },
+        zIndex: theme.zIndex.drawer + 1,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+    },
+    appBarShift: {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
     },
     menuButton: {
-        marginRight: theme.spacing(2),
+        marginRight: 36,
+    },
+    hide: {
+        display: 'none',
+    },
+    drawer: {
+        width: drawerWidth,
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+    },
+    drawerOpen: {
+        width: drawerWidth,
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    drawerClose: {
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        overflowX: 'hidden',
+        width: theme.spacing(7) + 1,
         [theme.breakpoints.up('sm')]: {
-            display: 'none',
+            width: theme.spacing(9) + 1,
         },
     },
-    // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
-    drawerPaper: {
-        width: drawerWidth,
+    toolbar: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        padding: theme.spacing(0, 1),
+        // necessary for content to be below app bar
+        ...theme.mixins.toolbar,
     },
     content: {
         flexGrow: 1,
@@ -60,93 +89,49 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ResponsiveDrawer(props) {
-    const { window } = props;
     const classes = useStyles();
     const theme = useTheme();
-    const [mobileOpen, setMobileOpen] = React.useState(false);
-
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
+    const [open, setOpen] = React.useState(true);
+    const [current, setCurrent] = React.useState("category");
+    const handleDrawerOpen = () => {
+        setOpen(true);
     };
 
-    const drawer = (
-        <div>
-            <div>
-                <h1 style={{ color: "#7272ff" }}>CRM</h1>
-            </div>
-            <div style={{ margin: "20px", display: "flex", alignItems: "center" }}>
-                <Avatar style={{ marginRight: "20px" }} alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
-                <span>Administator</span>
-            </div>
-            <List>
-                <Divider />
-                <Link style={{ color: "#333", textDecoration: "none" }} to="/add">
-                    <ListItem style={{ padding: "20px" }} button >
-                        <ListItemIcon><HomeIcon /></ListItemIcon>
-                        <ListItemText primary={"Home"} />
-                    </ListItem>
-                </Link>
-                <Link style={{ color: "#333", textDecoration: "none" }} to="/daily-income">
-                    <ListItem style={{ padding: "20px" }} button >
-                        <ListItemIcon><AttachMoneyIcon /></ListItemIcon>
-                        <ListItemText primary={"Daily Income"} />
-                    </ListItem>
-                </Link>
-                <Link style={{ color: "#333", textDecoration: "none" }} to="/stats">
-                    <ListItem style={{ padding: "20px" }} button >
-                        <ListItemIcon><EqualizerIcon /></ListItemIcon>
-                        <ListItemText primary={"Stats"} />
-                    </ListItem>
-                </Link>
-                <Link style={{ color: "#333", textDecoration: "none" }} to="/waiters">
-                    <ListItem style={{ padding: "20px" }} button >
-                        <ListItemIcon><PersonIcon /></ListItemIcon>
-                        <ListItemText primary={"Waiters"} />
-                    </ListItem>
-                </Link>
-                <br />
-                <Divider />
-                <Link style={{ color: "#333", textDecoration: "none" }} to="/add-product">
-                    <ListItem style={{ padding: "20px" }} button >
-                        <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
-                        <ListItemText primary={"Add Product"} />
-                    </ListItem>
-                </Link>
-                <Link style={{ color: "#333", textDecoration: "none" }} to="/add-category">
-                    <ListItem style={{ padding: "20px" }} button >
-                        <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
-                        <ListItemText primary={"Add Category"} />
-                    </ListItem>
-                </Link>
-
-            </List>
-        </div>
-    );
-
-    const container = window !== undefined ? () => window().document.body : undefined;
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
 
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar position="fixed" className={classes.appBar}>
+            <AppBar
+                position="fixed"
+                className={clsx(classes.appBar, {
+                    [classes.appBarShift]: open,
+                })}
+            >
                 <Toolbar>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
+                        onClick={handleDrawerOpen}
                         edge="start"
-                        onClick={handleDrawerToggle}
-                        className={classes.menuButton}
+                        className={clsx(classes.menuButton, {
+                            [classes.hide]: open,
+                        })}
                     >
-                        <MenuIcon />
+                        <MenuIcon style={{ color: "#707070" }} />
                     </IconButton>
-                    <Typography style={{ justifyContent: "space-between", display: "flex", width: "100%" }} variant="h6" noWrap >
-                        <Link style={{ color: "#fff", textDecoration: "none" }} to="/">
+                    <Typography variant="h6" style={{ justifyContent: "space-between", display: "flex", width: "100%", alignItems: "center" }} noWrap >
+                        <Link style={{ color: "#000", textDecoration: "none", fontSize: "40px", fontFamily: "Bebas Neue" }} to="/">
                             RESTAURANTLY
                         </Link>
                         <Button
-                            variant='contained'
+                            style={{
+                                backgroundColor: "#fff", borderRadius: "50px", fontSize: "16px", fontWeight: "bold", textTransform: "capitalize", width: "120px"
+                            }}
                             onClick={() => {
-                                axios.delete("http://192.168.1.200:4000/status").then((msg) => {
+                                axios.delete("http://192.168.43.206:4000/status").then((msg) => {
                                     alert(msg.data);
                                 })
                             }}>
@@ -155,37 +140,55 @@ function ResponsiveDrawer(props) {
                     </Typography>
                 </Toolbar>
             </AppBar>
-            <nav className={classes.drawer} aria-label="mailbox folders">
-                {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-                <Hidden smUp implementation="css">
-                    <Drawer
-                        container={container}
-                        variant="temporary"
-                        anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-                        open={mobileOpen}
-                        onClose={handleDrawerToggle}
-                        classes={{
-                            paper: classes.drawerPaper,
-                        }}
-                        ModalProps={{
-                            keepMounted: true, // Better open performance on mobile.
-                        }}
-                    >
-                        {drawer}
-                    </Drawer>
-                </Hidden>
-                <Hidden xsDown implementation="css">
-                    <Drawer
-                        classes={{
-                            paper: classes.drawerPaper,
-                        }}
-                        variant="permanent"
-                        open
-                    >
-                        {drawer}
-                    </Drawer>
-                </Hidden>
-            </nav>
+            <Drawer
+                variant="permanent"
+                className={clsx(classes.drawer, {
+                    [classes.drawerOpen]: open,
+                    [classes.drawerClose]: !open,
+                })}
+                classes={{
+                    paper: clsx({
+                        [classes.drawerOpen]: open,
+                        [classes.drawerClose]: !open,
+                    }),
+                }}
+            >
+                <div>
+                    <div className={classes.toolbar}>
+                        <IconButton onClick={handleDrawerClose} style={{ display: open ? "block" : "none" }}>
+                            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                        </IconButton>
+                    </div>
+                    <Divider />
+                    <List>
+                        <Link style={{ color: "#333", textDecoration: "none", position: "relative" }} to="/add-category">
+                            <ListItem style={{ padding: "20px" }} button >
+                                <ListItemIcon><AddCircleOutlineIcon /></ListItemIcon>
+                                <ListItemText primary={"Add Category"} />
+                            </ListItem>
+                        </Link>
+                        <Link style={{ color: "#333", textDecoration: "none" }} to="/daily-income">
+                            <ListItem style={{ padding: "20px" }} button >
+                                <ListItemIcon><AttachMoneyIcon /></ListItemIcon>
+                                <ListItemText primary={"Daily Income"} />
+                            </ListItem>
+                        </Link>
+                        <Link style={{ color: "#333", textDecoration: "none" }} to="/stats">
+                            <ListItem style={{ padding: "20px" }} button >
+                                <ListItemIcon><EqualizerIcon /></ListItemIcon>
+                                <ListItemText primary={"Stats"} />
+                            </ListItem>
+                        </Link>
+                        <Link style={{ color: "#333", textDecoration: "none" }} to="/waiters">
+                            <ListItem style={{ padding: "20px" }} button >
+                                <ListItemIcon><PersonIcon /></ListItemIcon>
+                                <ListItemText primary={"Waiters"} />
+                            </ListItem>
+                        </Link>
+
+                    </List>
+                </div>
+            </Drawer>
             <main style={{ marginTop: "50px" }} className={classes.content}>
                 {props.contents}
             </main>
