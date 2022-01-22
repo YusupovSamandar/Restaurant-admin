@@ -3,33 +3,11 @@ import MaterialTable from 'material-table';
 import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import { getAllProducts } from "./../../actions";
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default function Products() {
-
-    const [open, setOpen] = React.useState(false);
-    const [service, setService] = React.useState(0);
     const { products: data } = useSelector(state => state);
     const { useState } = React;
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-    React.useEffect(() => {
-        (async function () {
-            let { data: serv } = await axios.get("http://192.168.1.200:4000/service");
-            setService(serv)
-        })()
-    }, []);
 
 
     const [file, setFile] = useState(null);
@@ -39,29 +17,27 @@ export default function Products() {
     }
 
     React.useEffect(() => {
-        axios.get("http://192.168.1.200:4000/collections").then(({ data: collections }) => {
-            setColumn([
-                { title: 'Name', field: 'name', validate: rowData => rowData.name === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
-                { title: 'Price', field: 'price', type: "numeric", validate: rowData => rowData.price > 0 },
-                { title: 'Price 0.7', field: 'price07', type: "numeric" },
-                { title: 'Price 0.5', field: 'price05', type: "numeric" },
-                { title: 'Status', field: 'isAvailable', initialEditValue: 63, lookup: { 34: 'tugadi', 63: 'bor' } },
-                { title: 'Tarif', field: 'description' },
-                {
-                    title: 'Image', field: 'productImage', editable: "onAdd", editComponent: () => (
-                        <input type="file" value={file} name="productImage" onChange={fileSelectedHandler} accept=".jpg, .jpeg, .png" />
-                    ), render: rowData => {
-                        let imageUrl = "http://192.168.1.200:4000/" + rowData.productImage
-                        return (
-                            <div style={{ marginLeft: "30px" }}>
-                                <img style={{ width: "100px", borderRadius: "0px" }} src={imageUrl} alt="rasm yoq" />
-                            </div>
-                        );
-                    }
-                },
-                { title: "Category", field: "category", initialEditValue: Object.keys(collections)[0], lookup: collections, validate: rowData => rowData.category === '' ? { isValid: false, helperText: 'Category cannot be empty' } : true, editable: "onAdd" }
-            ])
-        })
+        setColumn([
+            { title: 'Name', field: 'name', validate: rowData => rowData.name === '' ? { isValid: false, helperText: 'Name cannot be empty' } : true },
+            { title: 'Price', field: 'price', type: "numeric", validate: rowData => rowData.price > 0 },
+            { title: 'Price 0.7', field: 'price07', type: "numeric" },
+            { title: 'Price 0.5', field: 'price05', type: "numeric" },
+            { title: 'Status', field: 'isAvailable', initialEditValue: 63, lookup: { 34: 'tugadi', 63: 'bor' } },
+            { title: 'Tarif', field: 'description' },
+            {
+                title: 'Image', field: 'productImage', editable: "onAdd", editComponent: () => (
+                    <input type="file" value={file} name="productImage" onChange={fileSelectedHandler} accept=".jpg, .jpeg, .png" />
+                ), render: rowData => {
+                    let imageUrl = "http://localhost:4000/" + rowData.productImage
+                    return (
+                        <div style={{ marginLeft: "30px" }}>
+                            <img style={{ width: "100px", borderRadius: "0px" }} src={imageUrl} alt="rasm yoq" />
+                        </div>
+                    );
+                }
+            }
+            // { title: "Category", field: "category", initialEditValue: Object.keys(collections)[0], lookup: collections, validate: rowData => rowData.category === '' ? { isValid: false, helperText: 'Category cannot be empty' } : true, editable: "onAdd" }
+        ])
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -70,24 +46,31 @@ export default function Products() {
 
     const updateGlobalProducts = () => {
         (async () => {
-            const { data: initialData } = await axios.get("http://192.168.1.200:4000/data");
-            axios.get("http://192.168.1.200:4000/collections").then(({ data: collections }) => {
+            const { data: initialData } = await axios.get("http://localhost:4000/data");
+            axios.get("http://localhost:4000/collections").then(({ data: collections }) => {
                 let result = Object.keys(collections).map((key) => {
                     return initialData[key].map((obj) => {
                         return { ...obj, category: key }
                     });
                 });
                 dispatch(getAllProducts(result.flat()));
+                console.log(result.flat());
             })
         })();
     }
 
     return (
-        <div>
+        <div style={{ marginTop: "4vh" }}>
             <MaterialTable
-                title="Editable Preview"
+                title={localStorage.getItem('currentCollection')}
                 columns={columns}
-                data={data}
+                data={data.filter((obj) => {
+                    if (obj.category === localStorage.getItem('currentCollection')) {
+                        return true;
+                    } else {
+                        return false
+                    }
+                })}
                 options={
                     { pageSize: 10 }
                 }
@@ -96,7 +79,7 @@ export default function Products() {
                         new Promise((resolve, reject) => {
                             let fd = new FormData();
                             fd.append('name', newData.name.trim());
-                            fd.append('category', newData.category);
+                            fd.append('category', localStorage.getItem('currentCollection'));
                             fd.append('isAvailable', newData.isAvailable);
                             fd.append('productImage', file);
                             setFile(null);
@@ -114,7 +97,7 @@ export default function Products() {
                             }
                             axios({
                                 method: 'post',
-                                url: `http://192.168.1.200:4000/data/${newData.category}`,
+                                url: `http://localhost:4000/data/${localStorage.getItem('currentCollection')}`,
                                 data: fd
                             }).then((messsage) => {
                                 if (messsage.status === 200) {
@@ -127,7 +110,7 @@ export default function Products() {
                         }),
                     onRowUpdate: (newData, oldData) =>
                         new Promise((resolve, reject) => {
-                            axios.put(`http://192.168.1.200:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07, isAvailable: newData.isAvailable, description: newData.description }).then(() => {
+                            axios.put(`http://localhost:4000/data/${oldData.category}/${oldData.name}`, { name: newData.name, price: newData.price, price05: newData.price05, price07: newData.price07, isAvailable: newData.isAvailable, description: newData.description }).then(() => {
                                 updateGlobalProducts();
                             });
                             setTimeout(() => {
@@ -136,7 +119,7 @@ export default function Products() {
                         }),
                     onRowDelete: oldData =>
                         new Promise((resolve, reject) => {
-                            axios.delete(`http://192.168.1.200:4000/data/${oldData.category}/${oldData.name}`).then(() => {
+                            axios.delete(`http://localhost:4000/data/${oldData.category}/${oldData.name}`).then(() => {
                                 updateGlobalProducts();
                             });
                             setTimeout(() => {
@@ -146,35 +129,6 @@ export default function Products() {
                 }
                 }
             />
-            <div style={{ marginTop: "20px", textAlign: "left", display: "flex", alignItems: "center", gap: "20px" }}>
-                <TextField value={service} id="outlined-basic" onChange={(e) => { setService(e.target.value); }} label="Service %" variant="outlined" />
-                <Button variant="contained" disabled={service > 0 ? false : true} onClick={handleClickOpen} color="primary">Confirm</Button>
-                <Dialog
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle style={{ width: "500px" }} id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            This will add extra {service}% money for per order!
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose} color="secondary">
-                            Cancel
-                        </Button>
-                        <Button onClick={() => {
-                            axios.post("http://192.168.1.200:4000/service", { service }).then(() => {
-                                handleClose();
-                            });
-                        }} color="primary" autoFocus>
-                            OK
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
         </div>
     )
 }

@@ -5,7 +5,6 @@ import Waiters from "./components/Waiters/waiters";
 import { useDispatch } from "react-redux";
 import { loadData, getAllProducts } from "./actions";
 import axios from "axios";
-import Home from "./components/Home/home";
 import Products from "./components/Products/Products";
 import Category from "./components/Category/category";
 import Statistics from "./components/Statistics/statistics";
@@ -24,13 +23,13 @@ function App() {
   useEffect(() => {
     (async () => {
       const { data: initialData } = await axios.get(
-        "http://192.168.1.200:4000/data"
-      );  
+        "http://localhost:4000/data"
+      );
       const { data: waiters } = await axios.get(
-        "http://192.168.1.200:4000/data/waiters"
+        "http://localhost:4000/data/waiters"
       );
       axios
-        .get("http://192.168.1.200:4000/collections")
+        .get("http://localhost:4000/collections")
         .then(({ data: collections }) => {
           let result = Object.keys(collections)
             .map((key) => {
@@ -55,10 +54,7 @@ function App() {
       <Router>
         <Switch>
           <Route exact path="/">
-            <Redirect to="/add" />
-          </Route>
-          <Route exact path="/add">
-            <Sidebar contents={<Home />} />
+            <Redirect to="/stats" />
           </Route>
           <Route exact path="/waiters">
             <Sidebar contents={<Waiters />} />

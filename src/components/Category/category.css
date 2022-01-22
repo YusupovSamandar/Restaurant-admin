@@ -1,0 +1,4 @@
+.hover-effects .MuiPaper-root.MuiPaper-elevation1.MuiPaper-rounded:hover {
+    box-shadow: 0px 0px 10px 5px rgba(34, 60, 80, 0.2);
+    cursor: pointer;
+}
